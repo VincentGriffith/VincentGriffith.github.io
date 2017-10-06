@@ -1,0 +1,58 @@
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap.min.css">
+    <style>
+        body {
+          background-color:#CCC;
+        }
+        h1, h2 {
+          background-color:#CCC;
+          display:inline;
+        }
+        img {
+          width:auto;
+        }
+        button {
+          border-color: transparent;
+          background-color:transparent;
+          display: inline;
+        }
+        span, button {
+          padding:0;
+          margin:0;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+        var metric = true;
+        function getWeather(position) {
+          $.getJSON("https://fcc-weather-api.glitch.me/api/current?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude, function(data) {
+            $("#location").html(data.name);
+            $("body").css("background-image","url(" + data.weather[0].icon + ")");
+            $("#icon").prop("alt",data.weather[0].description);
+            if (metric) {
+              $("#temp").html(data.main.temp);
+              $("#CF").html("&degC");
+            } else {
+              var tempf = data.main.temp * 9 / 5 + 32;
+              var roundedf = Math.round(tempf*10)/10;
+              $("#temp").html(roundedf);
+              $("#CF").html("&degF");
+            }
+          });
+        }
+
+        $(document).ready(function(){
+            document.getElementById("CF").onclick = function() {
+                metric = !metric;
+                navigator.geolocation.getCurrentPosition(getWeather);
+            };
+            navigator.geolocation.getCurrentPosition(getWeather);
+        });
+    </script>
+</head>
+
+<div class="text-center">
+  <h1 class="text-center" id="location">Location</h1><br>
+  <h2 class="text-center"><span id="temp">temp</span> <button id="CF"> &deg C/F</button></h2>
+</div>
