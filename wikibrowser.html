@@ -1,0 +1,50 @@
+<head>
+    <style type="text/css">
+        div {
+          margin:10px;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+        var results = document.getElementById("results");
+
+        function search() {
+          var terms = $("#searchTerms").val();
+          $.getJSON(
+            "https://en.wikipedia.org/w/api.php?callback=?",
+            {
+              action: "opensearch",
+              search: terms,
+              format: "json"
+            },
+            function(data) {
+              while (results.hasChildNodes()) {
+                     results.removeChild(results.lastChild);
+                     }
+              data[1].forEach(function(title, i) {
+                var preview = document.createElement("div");
+                var link = document.createElement("a");
+                var href = document.createAttribute("href");
+                href.value = data[3][i];
+                link.setAttributeNode(href);
+                var titlepreview = document.createElement("h3")
+                var titletext = document.createTextNode(title);
+                titlepreview.append(titletext);
+                link.append(titlepreview);
+                preview.append(link);
+                var previewtext = document.createTextNode(data[2][i]);
+                preview.append(previewtext);
+                results.append(preview);
+              });
+            }
+          );
+        }
+    </script>
+</head>
+
+<div id="searchbar" class="text-center">
+  <input id="searchTerms" type="text" value="Keywords">
+  <button id="searchbutton" onclick="search()">Search</button>
+  <a href="https://en.wikipedia.org/wiki/Special:Random"><button id="random" onclick="random()">Random Article</button></a>
+</div>
+<div id="results"></div>
